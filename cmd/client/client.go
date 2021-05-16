@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"sync"
 	"time"
@@ -26,12 +27,14 @@ func requestThread() {
 		if err != nil {
 			fmt.Println(err)
 		}
+		ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 	}
 	wg.Done()
 }
 
 func main() {
+	fmt.Printf("Running %d threads with %d requests per thread...", *numThreads, *numRequests)
 	wg.Add(*numThreads)
 	var start = time.Now()
 	for i := 0; i < *numThreads; i++ {
